@@ -1,19 +1,55 @@
-/*
- * Copyright 2017 Fraunhofer Institute for Manufacturing Engineering and Automation (IPA)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
-
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+/****************************************************************
+*
+* Copyright (c) 2010
+*
+* Fraunhofer Institute for Manufacturing Engineering
+* and Automation (IPA)
+*
+* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*
+* Project name: care-o-bot
+* ROS stack name: cob_driver
+* ROS package name: cob_camera_sensors
+* Description: Abstract interface for time-of-flight cameras.
+*
+* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*
+* Author: Jan Fischer, email:jan.fischer@ipa.fhg.de
+* Supervised by: Jan Fischer, email:jan.fischer@ipa.fhg.de
+*
+* Date of creation: May 2008
+* ToDo:
+*
+* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+* * Redistributions of source code must retain the above copyright
+* notice, this list of conditions and the following disclaimer.
+* * Redistributions in binary form must reproduce the above copyright
+* notice, this list of conditions and the following disclaimer in the
+* documentation and/or other materials provided with the distribution.
+* * Neither the name of the Fraunhofer Institute for Manufacturing
+* Engineering and Automation (IPA) nor the names of its
+* contributors may be used to endorse or promote products derived from
+* this software without specific prior written permission.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License LGPL as
+* published by the Free Software Foundation, either version 3 of the
+* License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU Lesser General Public License LGPL for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License LGPL along with this program.
+* If not, see <http://www.gnu.org/licenses/>.
+*
+****************************************************************/
 
 /// @file AbstractRangeImagingSensor.h
 /// Abstract interface for range imaging sensors.
@@ -23,17 +59,16 @@
 #ifndef __IPA_ABSTRACTRANGEIMAGINGSENSOR_H__
 #define __IPA_ABSTRACTRANGEIMAGINGSENSOR_H__
 
-#include "StdAfx.h"
 
 #ifdef __LINUX__
 	#include "cob_vision_utils/CameraSensorDefines.h"
 	#include "cob_vision_utils/CameraSensorTypes.h"
 #else
-	#include "cob_common/cob_vision_utils/common/include/cob_vision_utils/CameraSensorDefines.h"
-	#include "cob_common/cob_vision_utils/common/include/cob_vision_utils/CameraSensorTypes.h"
+	#include "cob_perception_common/cob_vision_utils/common/include/cob_vision_utils/CameraSensorDefines.h"
+	#include "cob_perception_common/cob_vision_utils/common/include/cob_vision_utils/CameraSensorTypes.h"
 #endif
 
-#include <opencv/cv.h>
+#include <opencv2/core/core.hpp>
 
 #include <iostream>
 #include <limits>
@@ -71,7 +106,7 @@ public:
 		std::stringstream m_Interface;				///< Interface, the camera is connected to (i.e. USB or ETHERNET)
 		std::stringstream m_IP;						///< IP address of the camera
 	};
-
+	
 	/// Destructor
 	virtual ~AbstractRangeImagingSensor();
 
@@ -81,9 +116,9 @@ public:
 	///	       One may use the camera index to apply different configuration files to each of them.
 	/// @return Return code.
 	virtual unsigned long Init(std::string directory, int cameraIndex = 0) = 0;
-
+	
 	/// Opens the camera device.
-	/// All camera specific parameters for opening the camera should have been
+	/// All camera specific parameters for opening the camera should have been 
 	/// set within the <code>Init()</code> function.
 	/// @return Return code.
 	virtual unsigned long Open() = 0;
@@ -115,12 +150,12 @@ public:
 	/// @param grayImage OpenCV conform image with grayscale information.
 	/// @param cartesianImage OpenCV conform image with cartesian (x,y,z) information in meters.
 	/// @param getLatestFrame Set true to acquire a new image on calling instead of returning the one acquired last time
-	/// @param useCalibratedZ Calibrate z values
+	/// @param useCalibratedZ Calibrate z values 
 	/// @param grayImageType Either gray image data is filled with amplitude image or intensity image
 	/// @throw IPA_Exception Throws an exception, if camera access failed
 	virtual unsigned long AcquireImages(cv::Mat* rangeImage = 0, cv::Mat* intensityImage = 0,
 		cv::Mat* cartesianImage = 0, bool getLatestFrame=true, bool undistort=true,
-		ipa_CameraSensors::t_ToFGrayImageType grayImageType = ipa_CameraSensors::INTENSITY_32F1) = 0;
+		ipa_CameraSensors::t_ToFGrayImageType grayImageType = ipa_CameraSensors::INTENSITY) = 0;
 
 	/// Acquires an image from SwissRanger.
 	/// This implementation is designated for people that do not use openCV image type.
@@ -131,19 +166,19 @@ public:
 	/// @param grayImage character array  with intensity (grayscale) information.
 	/// @param cartesianImage character array  with cartesian (x,y,z) information in meters.
 	/// @param getLatestFrame Set true to acquire a new image on calling instead of returning the one acquired last time
-	/// @param useCalibratedZ Calibrate z values
+	/// @param useCalibratedZ Calibrate z values 
 	/// @param grayImageType Either gray image data is filled with amplitude image or intensity image
 	/// @return Return code.
 	virtual unsigned long AcquireImages(int widthStepRange, int widthStepGray, int widthStepCartesian, char* rangeImage=NULL, char* grayImage=NULL,
-		char* cartesianImage=NULL, bool getLatestFrame=true, bool undistort=true,
-		ipa_CameraSensors::t_ToFGrayImageType grayImageType = ipa_CameraSensors::INTENSITY_32F1) = 0;
+		char* cartesianImage=NULL, bool getLatestFrame=true, bool undistort=true, 
+		ipa_CameraSensors::t_ToFGrayImageType grayImageType = ipa_CameraSensors::INTENSITY) = 0;
 
 	/// Save camera parameters.
 	/// Saves the on-line set parameters for the range imaging camera to a file.
 	/// @param filename Configuration file name.
 	/// @return Return code.
 	virtual unsigned long SaveParameters(const char* filename) = 0;
-
+	
 	/// Determines if range imaging camera has successfully been initialized.
 	/// @return True if camera is initialized, false otherwise.
 	virtual bool isInitialized() = 0;
@@ -172,6 +207,8 @@ public:
 	virtual unsigned long SetIntrinsics(cv::Mat& intrinsicMatrix,
 		cv::Mat& undistortMapX, cv::Mat& undistortMapY);
 
+	virtual unsigned long SetExtrinsics(cv::Mat& extrinsicMatrix);
+
 	/// Returns the number of images in the directory
 	/// @return The number of images in the directory
 	virtual int GetNumberOfImages() {return std::numeric_limits<int>::max();};
@@ -182,10 +219,12 @@ public:
 	/// @return Return code
 	virtual unsigned long SetPathToImages(std::string path);
 
+	virtual unsigned long ResetImages() {return RET_OK;};
+
 	unsigned int m_ImageCounter; ///< Holds the index of the image that is extracted during the next call of <code>AcquireImages</code>
 
 protected:
-
+		
 	t_CalibrationMethod m_CalibrationMethod; ///< Calibration method MATLAB, MATLAB_NO_Z or SWISSRANGER
 	t_RangeCameraParameters m_RangeCameraParameters; ///< Storage for xml configuration file parmeters
 	t_cameraType m_CameraType; ///< Camera Type
@@ -196,11 +235,12 @@ protected:
 	unsigned int m_BufferSize; ///< Number of images, the camera buffers internally
 
 	cv::Mat m_intrinsicMatrix;		///< Intrinsic parameters [fx 0 cx; 0 fy cy; 0 0 1]
+	cv::Mat m_extrinsicMatrix;		///< Extrinsic parameters: Translation und Rotation
 	cv::Mat m_undistortMapX;		///< The output array of x coordinates for the undistortion map
 	cv::Mat m_undistortMapY;		///< The output array of Y coordinates for the undistortion map
 
 private:
-
+	
 	/// Load general SR31 parameters and previously determined calibration parameters.
 	/// @param filename Range imaging sensor parameter path and file name.
 	/// @param cameraIndex It is possible to have several cameras of the same type on the system.
@@ -215,6 +255,9 @@ __DLL_LIBCAMERASENSORS__ AbstractRangeImagingSensorPtr CreateRangeImagingSensor_
 __DLL_LIBCAMERASENSORS__ AbstractRangeImagingSensorPtr CreateRangeImagingSensor_Swissranger();
 __DLL_LIBCAMERASENSORS__ AbstractRangeImagingSensorPtr CreateRangeImagingSensor_PMDCam();
 __DLL_LIBCAMERASENSORS__ AbstractRangeImagingSensorPtr CreateRangeImagingSensor_Kinect();
+__DLL_LIBCAMERASENSORS__ AbstractRangeImagingSensorPtr CreateRangeImagingSensor_EnsensoN30();
+__DLL_LIBCAMERASENSORS__ AbstractRangeImagingSensorPtr CreateRangeImagingSensor_EnsensoIDSColorRack();
+__DLL_LIBCAMERASENSORS__ AbstractRangeImagingSensorPtr CreateRangeImagingSensor_SoftkineticCamera();
 
 } // end namespace ipa_CameraSensors
 #endif // __IPA_ABSTRACTRANGEIMAGINGSENSOR_H__

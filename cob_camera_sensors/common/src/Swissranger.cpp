@@ -1,29 +1,63 @@
-/*
- * Copyright 2017 Fraunhofer Institute for Manufacturing Engineering and Automation (IPA)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
-
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
-#include "../include/cob_camera_sensors/StdAfx.h"
+/****************************************************************
+*
+* Copyright (c) 2010
+*
+* Fraunhofer Institute for Manufacturing Engineering
+* and Automation (IPA)
+*
+* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*
+* Project name: care-o-bot
+* ROS stack name: cob_driver
+* ROS package name: cob_camera_sensors
+* Description:
+*
+* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*
+* Author: Jan Fischer, email:jan.fischer@ipa.fhg.de
+* Supervised by: Jan Fischer, email:jan.fischer@ipa.fhg.de
+*
+* Date of creation: Mai 2008
+* ToDo:
+*
+* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+* * Redistributions of source code must retain the above copyright
+* notice, this list of conditions and the following disclaimer.
+* * Redistributions in binary form must reproduce the above copyright
+* notice, this list of conditions and the following disclaimer in the
+* documentation and/or other materials provided with the distribution.
+* * Neither the name of the Fraunhofer Institute for Manufacturing
+* Engineering and Automation (IPA) nor the names of its
+* contributors may be used to endorse or promote products derived from
+* this software without specific prior written permission.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License LGPL as
+* published by the Free Software Foundation, either version 3 of the
+* License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU Lesser General Public License LGPL for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License LGPL along with this program.
+* If not, see <http://www.gnu.org/licenses/>.
+*
+****************************************************************/
+#include <cob_vision_utils/StdAfx.h>
 #ifdef __LINUX__
 	#include "cob_camera_sensors/Swissranger.h"
 	#include "cob_vision_utils/VisionUtils.h"
 	#include "tinyxml.h"
 #else
 	#include "cob_driver/cob_camera_sensors/common/include/cob_camera_sensors/Swissranger.h"
-	#include "cob_common/cob_vision_utils/common/include/cob_vision_utils/VisionUtils.h"
-	#include "cob_vision/windows/src/extern/TinyXml/tinyxml.h"
+	#include "cob_perception_common/cob_vision_utils/common/include/cob_vision_utils/VisionUtils.h"
 #endif
 
 using namespace ipa_CameraSensors;
@@ -95,9 +129,9 @@ unsigned long Swissranger::Init(std::string directory, int cameraIndex)
 	{
 		std::cerr << "ERROR - Swissranger::Init:" << std::endl;
 		std::cerr << "\t ... Parsing xml configuration file failed." << std::endl;
-		return (RET_FAILED | RET_INIT_CAMERA_FAILED);
+		return (RET_FAILED | RET_INIT_CAMERA_FAILED);	
 	}
-
+	
 	m_CoeffsInitialized = true;
 
 	// Set callback function, to catch annoying ethernet messages
@@ -107,7 +141,7 @@ unsigned long Swissranger::Init(std::string directory, int cameraIndex)
 	{
 		// Load z-calibration files
 		std::string filename = directory + "MatlabCalibrationData/PMD/ZCoeffsA0.xml";
-		CvMat* c_mat = (CvMat*)cvLoad(filename.c_str());
+		CvMat* c_mat = (CvMat*)cvLoad(filename.c_str()); 
 		if (! c_mat)
 		{
 			std::cerr << "ERROR - PMDCamCube::LoadParameters:" << std::endl;
@@ -123,7 +157,7 @@ unsigned long Swissranger::Init(std::string directory, int cameraIndex)
 		}
 
 		filename = directory + "MatlabCalibrationData/PMD/ZCoeffsA1.xml";
-		c_mat = (CvMat*)cvLoad(filename.c_str());
+		c_mat = (CvMat*)cvLoad(filename.c_str()); 
 		if (! c_mat)
 		{
 			std::cerr << "ERROR - PMDCamCube::LoadParameters:" << std::endl;
@@ -139,7 +173,7 @@ unsigned long Swissranger::Init(std::string directory, int cameraIndex)
 		}
 
 		filename = directory + "MatlabCalibrationData/PMD/ZCoeffsA2.xml";
-		c_mat = (CvMat*)cvLoad(filename.c_str());
+		c_mat = (CvMat*)cvLoad(filename.c_str()); 
 		if (! c_mat)
 		{
 			std::cerr << "ERROR - PMDCamCube::LoadParameters:" << std::endl;
@@ -155,7 +189,7 @@ unsigned long Swissranger::Init(std::string directory, int cameraIndex)
 		}
 
 		filename = directory + "MatlabCalibrationData/PMD/ZCoeffsA3.xml";
-		c_mat = (CvMat*)cvLoad(filename.c_str());
+		c_mat = (CvMat*)cvLoad(filename.c_str()); 
 		if (! c_mat)
 		{
 			std::cerr << "ERROR - PMDCamCube::LoadParameters:" << std::endl;
@@ -171,7 +205,7 @@ unsigned long Swissranger::Init(std::string directory, int cameraIndex)
 		}
 
 		filename = directory + "MatlabCalibrationData/PMD/ZCoeffsA4.xml";
-		c_mat = (CvMat*)cvLoad(filename.c_str());
+		c_mat = (CvMat*)cvLoad(filename.c_str()); 
 		if (! c_mat)
 		{
 			std::cerr << "ERROR - PMDCamCube::LoadParameters:" << std::endl;
@@ -187,7 +221,7 @@ unsigned long Swissranger::Init(std::string directory, int cameraIndex)
 		}
 
 		filename = directory + "MatlabCalibrationData/PMD/ZCoeffsA5.xml";
-		c_mat = (CvMat*)cvLoad(filename.c_str());
+		c_mat = (CvMat*)cvLoad(filename.c_str()); 
 		if (! c_mat)
 		{
 			std::cerr << "ERROR - PMDCamCube::LoadParameters:" << std::endl;
@@ -203,7 +237,7 @@ unsigned long Swissranger::Init(std::string directory, int cameraIndex)
 		}
 
 		filename = directory + "MatlabCalibrationData/PMD/ZCoeffsA6.xml";
-		c_mat = (CvMat*)cvLoad(filename.c_str());
+		c_mat = (CvMat*)cvLoad(filename.c_str()); 
 		if (! c_mat)
 		{
 			std::cerr << "ERROR - PMDCamCube::LoadParameters:" << std::endl;
@@ -218,7 +252,7 @@ unsigned long Swissranger::Init(std::string directory, int cameraIndex)
 			cvReleaseMat(&c_mat);
 		}
 	}
-
+	
 	// set init flag
 	m_initialized = true;
 	m_GrayImageAcquireCalled = false;
@@ -311,14 +345,14 @@ unsigned long Swissranger::Close()
 		return RET_FAILED;
 	}
 	m_SRCam = 0;
-
+	
 	m_open = false;
 	return RET_OK;
 
 }
 
 
-unsigned long Swissranger::SetProperty(t_cameraProperty* cameraProperty)
+unsigned long Swissranger::SetProperty(t_cameraProperty* cameraProperty) 
 {
 	if (!m_SRCam)
 	{
@@ -370,7 +404,7 @@ unsigned long Swissranger::SetProperty(t_cameraProperty* cameraProperty)
 				return RET_FAILED;
 			}
 			break;
-		case PROP_INTEGRATION_TIME:
+		case PROP_INTEGRATION_TIME:	
 			if (cameraProperty->propertyType & ipa_CameraSensors::TYPE_SPECIAL)
 			{
 				if(cameraProperty->specialValue == ipa_CameraSensors::VALUE_AUTO)
@@ -445,15 +479,15 @@ unsigned long Swissranger::SetProperty(t_cameraProperty* cameraProperty)
 			else if (cameraProperty->propertyType & (ipa_CameraSensors::TYPE_STRING))
 			{
 				// MF_40MHz, SR3k: maximal range 3.75m
-                // MF_30MHz, SR3k, SR4k: maximal range 5m
-                // MF_21MHz, SR3k: maximal range 7.14m
-                // MF_20MHz, SR3k: maximal range 7.5m
-                // MF_19MHz, SR3k: maximal range 7.89m
-                // MF_60MHz, SR4k: maximal range 2.5m
-                // MF_15MHz, SR4k: maximal range 10m
-                // MF_10MHz, SR4k: maximal range 15m
-                // MF_29MHz, SR4k: maximal range 5.17m
-                // MF_31MHz
+				// MF_30MHz, SR3k, SR4k: maximal range 5m
+				// MF_21MHz, SR3k: maximal range 7.14m
+				// MF_20MHz, SR3k: maximal range 7.5m
+				// MF_19MHz, SR3k: maximal range 7.89m
+				// MF_60MHz, SR4k: maximal range 2.5m 
+				// MF_15MHz, SR4k: maximal range 10m
+				// MF_10MHz, SR4k: maximal range 15m
+				// MF_29MHz, SR4k: maximal range 5.17m
+				// MF_31MHz
 				if (cameraProperty->stringData == "MF_40MHz")
 				{
 					err = SR_SetModulationFrequency(m_SRCam, MF_40MHz);
@@ -499,14 +533,14 @@ unsigned long Swissranger::SetProperty(t_cameraProperty* cameraProperty)
 					std::cerr << "ERROR - Swissranger::SetProperty:" << std::endl;
 					std::cerr << "\t ... Modulation frequency " << cameraProperty->stringData << " unknown" << std::endl;
 				}
-
+				
 				if(err<0)
 				{
 					std::cerr << "ERROR - Swissranger::SetProperty:" << std::endl;
 					std::cerr << "\t ... Could not set modulation frequency " << cameraProperty->stringData << std::endl;
 					return RET_FAILED;
 				}
-
+				
 			}
 			else
 			{
@@ -533,7 +567,7 @@ unsigned long Swissranger::SetProperty(t_cameraProperty* cameraProperty)
 				return RET_FAILED;
 			}
 			break;
-		default:
+		default: 				
 			std::cout << "Swissranger::SetProperty: Property " << cameraProperty->propertyID << " unspecified.\n";
 			return RET_FAILED;
 			break;
@@ -543,13 +577,13 @@ unsigned long Swissranger::SetProperty(t_cameraProperty* cameraProperty)
 }
 
 
-unsigned long Swissranger::SetPropertyDefaults()
+unsigned long Swissranger::SetPropertyDefaults() 
 {
 	return RET_FUNCTION_NOT_IMPLEMENTED;
 }
 
 
-unsigned long Swissranger::GetProperty(t_cameraProperty* cameraProperty)
+unsigned long Swissranger::GetProperty(t_cameraProperty* cameraProperty) 
 {
 	switch (cameraProperty->propertyID)
 	{
@@ -569,23 +603,23 @@ unsigned long Swissranger::GetProperty(t_cameraProperty* cameraProperty)
 			}
 			break;
 
-		case PROP_INTEGRATION_TIME:
+		case PROP_INTEGRATION_TIME:	
 			if (isOpen())
 			{
 				cameraProperty->u_charData = SR_GetIntegrationTime(m_SRCam);
-				cameraProperty->propertyType = (TYPE_UNSIGNED | TYPE_CHARACTER);
+				cameraProperty->propertyType = (TYPE_UNSIGNED | TYPE_CHARACTER);	
 			}
 			else
 			{
 				return (RET_FAILED | RET_CAMERA_NOT_OPEN);
 			}
 			break;
-
-		case PROP_ACQUIRE_MODE:
+			
+		case PROP_ACQUIRE_MODE:	
 			if (isOpen())
 			{
 				cameraProperty->integerData = SR_GetMode(m_SRCam);
-				cameraProperty->propertyType = TYPE_INTEGER;
+				cameraProperty->propertyType = TYPE_INTEGER;	
 			}
 			else
 			{
@@ -608,7 +642,7 @@ unsigned long Swissranger::GetProperty(t_cameraProperty* cameraProperty)
 			}
 			break;
 
-		default:
+		default: 				
 			std::cout << "ERROR - Swissranger::GetProperty:" << std::endl;
 			std::cout << "\t ... Property " << cameraProperty->propertyID << " unspecified.";
 			return RET_FAILED;
@@ -622,7 +656,7 @@ unsigned long Swissranger::GetProperty(t_cameraProperty* cameraProperty)
 
 // Wrapper for IplImage retrival from AcquireImage
 // Images have to be initialized prior to calling this function
-unsigned long Swissranger::AcquireImages(cv::Mat* rangeImage, cv::Mat* grayImage, cv::Mat* cartesianImage,
+unsigned long Swissranger::AcquireImages(cv::Mat* rangeImage, cv::Mat* grayImage, cv::Mat* cartesianImage, 
 										 bool getLatestFrame, bool undistort, ipa_CameraSensors::t_ToFGrayImageType grayImageType)
 {
 	char* rangeImageData = 0;
@@ -652,7 +686,7 @@ unsigned long Swissranger::AcquireImages(cv::Mat* rangeImage, cv::Mat* grayImage
 		grayImage->create(height, width, CV_32FC(1));
 		grayImageData = grayImage->ptr<char>(0);
 		widthStepGray = grayImage->step;
-	}
+	}	
 
 	if(cartesianImage)
 	{
@@ -667,7 +701,7 @@ unsigned long Swissranger::AcquireImages(cv::Mat* rangeImage, cv::Mat* grayImage
 	}
 
 	return AcquireImages(widthStepRange, widthStepGray, widthStepCartesian, rangeImageData, grayImageData, cartesianImageData, getLatestFrame, undistort, grayImageType);
-
+	
 }
 
 // Enables faster image retrival than AcquireImage
@@ -724,7 +758,7 @@ unsigned long Swissranger::AcquireImages(int widthStepRange, int widthStepGray, 
 	{
 		int imageStep = -1;
 		float* f_ptr = 0;
-
+		
 		// put data in corresponding IPLImage structures
 		for(unsigned int row=0; row<(unsigned int)height; row++)
 		{
@@ -734,14 +768,14 @@ unsigned long Swissranger::AcquireImages(int widthStepRange, int widthStepGray, 
 			for (unsigned int col=0; col<(unsigned int)width; col++)
 			{
 				f_ptr[col] = (float)(pixels[imageStep + col]);
-			}
+			}	
 		}
-
+		
 		if (undistort)
 		{
 			cv::Mat undistortedData(height, width, CV_32FC(1), (float*) rangeImageData);
 			cv::Mat distortedData;
-
+ 
 			assert (!m_undistortMapX.empty() && !m_undistortMapY.empty());
 			cv::remap(distortedData, undistortedData, m_undistortMapX, m_undistortMapY, cv::INTER_LINEAR);
 		}
@@ -775,14 +809,14 @@ unsigned long Swissranger::AcquireImages(int widthStepRange, int widthStepGray, 
 			for (unsigned int col=0; col<(unsigned int)width-1; col++)
 			{
 				f_ptr[col] = (float)(pixels[imageStep+col]);
-			}
+			}	
 		}
-
+		
 		if (undistort)
 		{
 			cv::Mat undistortedData( height, width, CV_32FC1, (float*) grayImageData);
 			cv::Mat distortedData;
-
+ 
 			assert (!m_undistortMapX.empty() && !m_undistortMapY.empty());
 			cv::remap(distortedData, undistortedData, m_undistortMapX, m_undistortMapY, cv::INTER_LINEAR);
 		}
@@ -815,7 +849,7 @@ unsigned long Swissranger::AcquireImages(int widthStepRange, int widthStepGray, 
 						zRaw = (float)(pixels[width*row + col]);
 						GetCalibratedZMatlab(col, row, zRaw, zCalibrated);
 						f_ptr[col] = zCalibrated;
-					}
+					}	
 				}
 				/*IplImage dummy;
 				IplImage *z = cvGetImage(distortedData, &dummy);
@@ -828,9 +862,9 @@ unsigned long Swissranger::AcquireImages(int widthStepRange, int widthStepGray, 
 
 				// Undistort
 				cv::Mat undistortedData;
-	 			assert (!m_undistortMapX.empty() && !m_undistortMapY.empty());
+				assert (!m_undistortMapX.empty() && !m_undistortMapY.empty());
 				cv::remap(distortedData, undistortedData, m_undistortMapX, m_undistortMapY, cv::INTER_LINEAR);
-
+				
 				/*IplImage dummy;
 				IplImage* z = cvGetImage(undistortedData, &dummy);
 				IplImage* image = cvCreateImage(cvGetSize(z), IPL_DEPTH_8U, 3);
@@ -876,12 +910,12 @@ unsigned long Swissranger::AcquireImages(int widthStepRange, int widthStepGray, 
 				{
 					GetCalibratedZSwissranger(col, row, width, zCalibrated);
 					f_ptr[col] = zCalibrated;
-				}
+				}	
 			}
 
 			// Undistort
 			cv::Mat undistortedData;
- 			assert (!m_undistortMapX.empty() && !m_undistortMapY.empty());
+			assert (!m_undistortMapX.empty() && !m_undistortMapY.empty());
 			cv::remap(distortedData, undistortedData, m_undistortMapX, m_undistortMapY, cv::INTER_LINEAR);
 
 			// Calculate X and Y based on instrinsic rotation and translation
@@ -904,7 +938,7 @@ unsigned long Swissranger::AcquireImages(int widthStepRange, int widthStepGray, 
 		else if(m_CalibrationMethod==NATIVE)
 		{
 			SR_CoordTrfFlt(m_SRCam, m_X, m_Y, m_Z, sizeof(float), sizeof(float), sizeof(float));
-
+					
 			for(unsigned int row=0; row<(unsigned int)height; row++)
 			{
 				f_ptr = (float*)(cartesianImageData + row*widthStepCartesian);
@@ -932,7 +966,7 @@ unsigned long Swissranger::AcquireImages(int widthStepRange, int widthStepGray, 
 	return RET_OK;
 }
 
-unsigned long Swissranger::SaveParameters(const char* filename)
+unsigned long Swissranger::SaveParameters(const char* filename) 
 {
 	return RET_FUNCTION_NOT_IMPLEMENTED;
 }
@@ -940,7 +974,7 @@ unsigned long Swissranger::SaveParameters(const char* filename)
 unsigned long Swissranger::GetCalibratedZMatlab(int u, int v, float zRaw, float& zCalibrated)
 {
 
-	double c[7] = {m_CoeffsA0.at<double>(v,u), m_CoeffsA1.at<double>(v,u), m_CoeffsA2.at<double>(v,u),
+	double c[7] = {m_CoeffsA0.at<double>(v,u), m_CoeffsA1.at<double>(v,u), m_CoeffsA2.at<double>(v,u), 
 		m_CoeffsA3.at<double>(v,u), m_CoeffsA4.at<double>(v,u), m_CoeffsA5.at<double>(v,u), m_CoeffsA6.at<double>(v,u)};
 	double y = 0;
 	ipa_Utils::EvaluatePolynomial((double) zRaw, 6, &c[0], &y);
@@ -979,8 +1013,8 @@ unsigned long Swissranger::GetCalibratedXYMatlab(int u, int v, float z, float& x
 		std::cerr << "\t ... fx is 0.\n";
 		return RET_FAILED;
 	}
-	x = (float) (z*(u-cx)/fx) ;
-
+	x = (float) (z*(u-cx)/fx) ; 
+	
 	// Fundamental equation: v = (fy*y)/z + cy
 	if (fy == 0)
 	{
@@ -988,7 +1022,7 @@ unsigned long Swissranger::GetCalibratedXYMatlab(int u, int v, float z, float& x
 		std::cerr << "\t ... fy is 0.\n";
 		return RET_FAILED;
 	}
-	y = (float) (z*(v-cy)/fy);
+	y = (float) (z*(v-cy)/fy); 
 
 	// Conversion from mm to m
 	x /= 1000;
@@ -1151,7 +1185,7 @@ unsigned long Swissranger::LoadParameters(const char* filename, int cameraIndex)
 //************************************************************************************
 //	BEGIN LibCameraSensors
 //************************************************************************************
-		// Tag element "LibCameraSensors" of Xml Inifile
+		// Tag element "LibCameraSensors" of Xml Inifile		
 		TiXmlElement *p_xmlElement_Root = NULL;
 		p_xmlElement_Root = p_configXmlDocument->FirstChildElement( "LibCameraSensors" );
 
@@ -1161,7 +1195,7 @@ unsigned long Swissranger::LoadParameters(const char* filename, int cameraIndex)
 //************************************************************************************
 //	BEGIN LibCameraSensors->Swissranger
 //************************************************************************************
-			// Tag element "Swissranger3000" of Xml Inifile
+			// Tag element "Swissranger3000" of Xml Inifile		
 			TiXmlElement *p_xmlElement_Root_SR31 = NULL;
 			std::stringstream ss;
 			ss << "Swissranger_" << cameraIndex;
@@ -1201,7 +1235,7 @@ unsigned long Swissranger::LoadParameters(const char* filename, int cameraIndex)
 					std::cerr << "\t ... Can't find tag 'Role'." << std::endl;
 					return (RET_FAILED | RET_XML_TAG_NOT_FOUND);
 				}
-
+				
 //************************************************************************************
 //	BEGIN LibCameraSensors->Swissranger->Interface
 //************************************************************************************
@@ -1253,7 +1287,7 @@ unsigned long Swissranger::LoadParameters(const char* filename, int cameraIndex)
 					std::cerr << "\t ... Can't find tag 'Interface'." << std::endl;
 					return (RET_FAILED | RET_XML_TAG_NOT_FOUND);
 				}
-
+			
 //************************************************************************************
 //	BEGIN LibCameraSensors->Swissranger->AmplitudeThreshold
 //************************************************************************************
@@ -1525,12 +1559,12 @@ unsigned long Swissranger::LoadParameters(const char* filename, int cameraIndex)
 					std::cerr << "\t ... Can't find tag 'CalibrationMethod'." << std::endl;
 					return (RET_FAILED | RET_XML_TAG_NOT_FOUND);
 				}
-
+			
 			}
 //************************************************************************************
 //	END LibCameraSensors->Swissranger
 //************************************************************************************
-			else
+			else 
 			{
 				std::cerr << "ERROR - Swissranger::LoadParameters:" << std::endl;
 				std::cerr << "\t ... Can't find tag '" << ss.str() << "'" << std::endl;
@@ -1541,7 +1575,7 @@ unsigned long Swissranger::LoadParameters(const char* filename, int cameraIndex)
 //************************************************************************************
 //	END LibCameraSensors
 //************************************************************************************
-		else
+		else 
 		{
 			std::cerr << "ERROR - Swissranger::LoadParameters:" << std::endl;
 			std::cerr << "\t ... Can't find tag 'LibCameraSensors'." << std::endl;
@@ -1549,11 +1583,11 @@ unsigned long Swissranger::LoadParameters(const char* filename, int cameraIndex)
 		}
 	}
 
-
+	
 	std::cout << "INFO - Swissranger::LoadParameters:" << std::endl;
 	std::cout << "\t ... Parsing xml calibration file: Done.\n";
 
-
+	
 
 	return RET_OK;
 }

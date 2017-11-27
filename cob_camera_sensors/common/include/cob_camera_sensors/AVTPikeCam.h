@@ -20,12 +20,10 @@
 /// @author Jan Fischer
 /// @date Novemeber, 2008
 
+#ifdef __BUILD_WITH_AVTPIKECAM__
 
 #ifndef __IPA_AVTPIKECAM_H__
 #define __IPA_AVTPIKECAM_H__
-
-#include "StdAfx.h"
-
 #ifdef __LINUX__
 	#include "cob_camera_sensors/AbstractColorCamera.h"
 #else
@@ -186,3 +184,4 @@ __DLL_LIBCAMERASENSORS__ AbstractColorCameraPtr CreateColorCamera_AVTPikeCam();
 #endif //__IPA_AVTPIKECAM_H__
 
 
+#endif // __BUILD_WITH_AVTPIKECAM__

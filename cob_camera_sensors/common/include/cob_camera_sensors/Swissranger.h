@@ -24,7 +24,6 @@
 #ifndef __IPA_SWISSRANGER_H__
 #define __IPA_SWISSRANGER_H__
 
-#include "StdAfx.h"
 
 // Windows
 #ifdef _WIN32

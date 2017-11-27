@@ -1,32 +1,67 @@
-/*
- * Copyright 2017 Fraunhofer Institute for Manufacturing Engineering and Automation (IPA)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
-
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
-#include "../include/cob_camera_sensors/StdAfx.h"
+/****************************************************************
+*
+* Copyright (c) 2010
+*
+* Fraunhofer Institute for Manufacturing Engineering
+* and Automation (IPA)
+*
+* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*
+* Project name: care-o-bot
+* ROS stack name: cob_driver
+* ROS package name: cob_camera_sensors
+* Description:
+*
+* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*
+* Author: Jan Fischer, email:jan.fischer@ipa.fhg.de
+* Supervised by: Jan Fischer, email:jan.fischer@ipa.fhg.de
+*
+* Date of creation: Mai 2008
+* ToDo:
+*
+* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+* * Redistributions of source code must retain the above copyright
+* notice, this list of conditions and the following disclaimer.
+* * Redistributions in binary form must reproduce the above copyright
+* notice, this list of conditions and the following disclaimer in the
+* documentation and/or other materials provided with the distribution.
+* * Neither the name of the Fraunhofer Institute for Manufacturing
+* Engineering and Automation (IPA) nor the names of its
+* contributors may be used to endorse or promote products derived from
+* this software without specific prior written permission.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License LGPL as
+* published by the Free Software Foundation, either version 3 of the
+* License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU Lesser General Public License LGPL for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License LGPL along with this program.
+* If not, see <http://www.gnu.org/licenses/>.
+*
+****************************************************************/
+#include <cob_vision_utils/StdAfx.h>
 
 #ifdef __LINUX__
 #include "cob_camera_sensors/VirtualColorCam.h"
-#include "tinyxml.h"
-#else
-#include "cob_driver/cob_camera_sensors/common/include/cob_camera_sensors/VirtualColorCam.h"
-#include "cob_vision/windows/src/extern/TinyXml/tinyxml.h"
-#endif
 
+#include "tinyxml.h"
 #include <opencv/highgui.h>
 #include <iostream>
+#include <boost/filesystem.hpp>
+#else
+#include "cob_driver/cob_camera_sensors/common/include/cob_camera_sensors/VirtualColorCam.h"
+#endif
 
 namespace fs = boost::filesystem;
 using namespace ipa_CameraSensors;
@@ -75,7 +110,7 @@ unsigned long VirtualColorCam::Init(std::string directory, int cameraIndex)
 	}
 
 	m_CameraIndex = cameraIndex;
-
+		
 	m_initialized = true;
 	return RET_OK;
 
@@ -111,7 +146,8 @@ unsigned long VirtualColorCam::Open()
 	if ( !fs::exists( absoluteDirectoryName ) )
 	{
 		std::cerr << "ERROR - VirtualColorCam::Open:" << std::endl;
-		std::cerr << "\t ... Path '" << absoluteDirectoryName.file_string() << "' not found" << std::endl;
+		//std::cerr << "\t ... Path '" << absoluteDirectoryName.file_string() << "' not found" << std::endl;
+		std::cerr << "\t ... Path '" << absoluteDirectoryName.string() << "' not found" << std::endl;
 		return (ipa_CameraSensors::RET_FAILED | ipa_CameraSensors::RET_FAILED_OPEN_FILE);
 	}
 
@@ -120,7 +156,8 @@ unsigned long VirtualColorCam::Open()
 	if ( fs::is_directory( absoluteDirectoryName ) )
 	{
 		std::cout << "INFO - VirtualColorCam::Open:" << std::endl;
-		std::cout << "\t ... Parsing directory '" << absoluteDirectoryName.directory_string() << "'" << std::endl;;
+		//std::cout << "\t ... Parsing directory '" << absoluteDirectoryName.directory_string() << "'" << std::endl;;
+		std::cout << "\t ... Parsing directory '" << std::endl;
 	    fs::directory_iterator end_iter;
 		for ( fs::directory_iterator dir_itr( absoluteDirectoryName ); dir_itr != end_iter; ++dir_itr )
 		{
@@ -164,7 +201,8 @@ unsigned long VirtualColorCam::Open()
 	else
 	{
 		std::cerr << "ERROR - VirtualColorCam::Open:" << std::endl;
-		std::cerr << "\t .... Path '" << absoluteDirectoryName.file_string() << "' is not a directory." << std::endl;
+		//std::cerr << "\t .... Path '" << absoluteDirectoryName.file_string() << "' is not a directory." << std::endl;
+		std::cerr << "\t .... Path '" << absoluteDirectoryName.string() << "' is not a directory." << std::endl;
 		return ipa_CameraSensors::RET_FAILED;
 	}
 
@@ -186,17 +224,23 @@ unsigned long VirtualColorCam::Open()
 
 }
 
+unsigned long VirtualColorCam::ResetImages()
+{ 
+	m_ColorImageFileNames.clear();
+	return RET_OK;
+}
+
 int VirtualColorCam::GetNumberOfImages()
 {
-	return (int)std::min(0.0f, (float)m_ColorImageFileNames.size());
+	return m_ColorImageFileNames.size();
 }
 
 unsigned long VirtualColorCam::SaveParameters(const char* filename)
-{
+{ 
 	return RET_FAILED;
 }
 
-unsigned long VirtualColorCam::SetPathToImages(std::string path)
+unsigned long VirtualColorCam::SetPathToImages(std::string path) 
 {
 	m_CameraDataDirectory = path;
 	return RET_OK;
@@ -212,7 +256,7 @@ unsigned long VirtualColorCam::Close()
 
 	m_open = false;
 	return RET_OK;
-}
+} 
 
 
 unsigned long VirtualColorCam::SetProperty(t_cameraProperty* cameraProperty)
@@ -229,7 +273,7 @@ unsigned long VirtualColorCam::SetProperty(t_cameraProperty* cameraProperty)
 			m_ImageWidth = cameraProperty->cameraResolution.xResolution;
 			m_ImageHeight = cameraProperty->cameraResolution.yResolution;
 			break;
-		default:
+		default: 				
 			std::cerr << "ERROR - VirtualColorCam::SetProperty:" << std::endl;
 			std::cerr << "\t ... Property " << cameraProperty->propertyID << " unspecified.";
 			return RET_FAILED;
@@ -246,7 +290,7 @@ unsigned long VirtualColorCam::GetProperty(t_cameraProperty* cameraProperty)
 {
 	switch (cameraProperty->propertyID)
 	{
-		case PROP_CAMERA_RESOLUTION:
+		case PROP_CAMERA_RESOLUTION:	
 			cameraProperty->cameraResolution.xResolution = m_ImageWidth;
 			cameraProperty->cameraResolution.yResolution = m_ImageHeight;
 			cameraProperty->propertyType = TYPE_CAMERA_RESOLUTION;
@@ -258,7 +302,7 @@ unsigned long VirtualColorCam::GetProperty(t_cameraProperty* cameraProperty)
 			return RET_OK;
 			break;
 
-		default:
+		default: 				
 			std::cerr << "ERROR - VirtualColorCam::SetProperty:" << std::endl;
 			std::cerr << "\t ... Property " << cameraProperty->propertyID << " unspecified.";
 			return RET_FAILED;
@@ -267,7 +311,7 @@ unsigned long VirtualColorCam::GetProperty(t_cameraProperty* cameraProperty)
 	}
 
 	return RET_OK;
-}
+} 
 
 
 unsigned long VirtualColorCam::GetColorImage(char* colorImageData, bool getLatestFrame)
@@ -278,7 +322,7 @@ unsigned long VirtualColorCam::GetColorImage(char* colorImageData, bool getLates
 		std::cerr << "\t ... Color camera not open." << std::endl;
 		return (RET_FAILED | RET_CAMERA_NOT_OPEN);
 	}
-
+	
 	IplImage* colorImage = (IplImage*) cvLoadImage(m_ColorImageFileNames[m_ImageCounter].c_str(), CV_LOAD_IMAGE_COLOR);
 
 	for(int row=0; row<m_ImageHeight; row++)
@@ -289,9 +333,9 @@ unsigned long VirtualColorCam::GetColorImage(char* colorImageData, bool getLates
 			((char*) (colorImageData + row*colorImage->widthStep))[col*3 + 0] = f_color_ptr[0];
 			((char*) (colorImageData + row*colorImage->widthStep))[col*3 + 1] = f_color_ptr[1];
 			((char*) (colorImageData + row*colorImage->widthStep))[col*3 + 2] = f_color_ptr[2];
-		}
+		}	
 	}
-
+	
 	cvReleaseImage(&colorImage);
 
 	m_ImageCounter++;
@@ -328,7 +372,7 @@ unsigned long VirtualColorCam::PrintCameraInformation()
 	return RET_FUNCTION_NOT_IMPLEMENTED;
 }
 
-unsigned long VirtualColorCam::TestCamera(const char* filename)
+unsigned long VirtualColorCam::TestCamera(const char* filename) 
 {
 	if (AbstractColorCamera::TestCamera(filename) & RET_FAILED)
 	{
@@ -358,7 +402,7 @@ unsigned long VirtualColorCam::LoadParameters(const char* filename, int cameraIn
 //************************************************************************************
 //	BEGIN LibCameraSensors
 //************************************************************************************
-		// Tag element "LibCameraSensors" of Xml Inifile
+		// Tag element "LibCameraSensors" of Xml Inifile		
 		TiXmlElement *p_xmlElement_Root = NULL;
 		p_xmlElement_Root = p_configXmlDocument->FirstChildElement( "LibCameraSensors" );
 		if ( p_xmlElement_Root )
@@ -367,7 +411,7 @@ unsigned long VirtualColorCam::LoadParameters(const char* filename, int cameraIn
 //************************************************************************************
 //	BEGIN LibCameraSensors->VirtualColorCam
 //************************************************************************************
-			// Tag element "VirtualColorCam" of Xml Inifile
+			// Tag element "VirtualColorCam" of Xml Inifile		
 			TiXmlElement *p_xmlElement_Root_VirtualColorCam = NULL;
 			std::stringstream ss;
 			ss << "VirtualColorCam_" << cameraIndex;
@@ -390,7 +434,7 @@ unsigned long VirtualColorCam::LoadParameters(const char* filename, int cameraIn
 						std::cerr << "VirtualColorCam::LoadParameters: Can't find attribute 'relativePath' of tag 'CameraDataDirectory'." << std::endl;
 						return (RET_FAILED | RET_XML_ATTR_NOT_FOUND);
 					}
-
+					
 					m_CameraDataDirectory = m_CameraDataDirectory + tempString + "/";
 				}
 				else
@@ -403,7 +447,7 @@ unsigned long VirtualColorCam::LoadParameters(const char* filename, int cameraIn
 //************************************************************************************
 //	END LibCameraSensors->VirtualColorCam
 //************************************************************************************
-			else
+			else 
 			{
 				std::cerr << "ERROR - VirtualColorCam::LoadParameters:" << std::endl;
 				std::cerr << "\t ... Can't find tag '" << ss.str() << "'" << std::endl;
@@ -414,7 +458,7 @@ unsigned long VirtualColorCam::LoadParameters(const char* filename, int cameraIn
 //************************************************************************************
 //	END LibCameraSensors
 //************************************************************************************
-		else
+		else 
 		{
 			std::cerr << "ERROR - VirtualColorCam::LoadParameters:" << std::endl;
 			std::cerr << "\t ... Can't find tag 'LibCameraSensors'." << std::endl;
